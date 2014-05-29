@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import urllib2
 import hashlib
-import os.path
+import os
 from socket import error as SocketError
 import errno
 import random
@@ -26,8 +26,12 @@ class Downloader(object):
 			return False
 		timeout = 1+retry
 		urlhash = hashlib.md5(url).hexdigest()
-		filepath = self.cachedir+urlhash
+		filepath = self.cachedir+urlhash+'.'+self.get_extension(url)
+		filepath_old = self.cachedir+urlhash #without extention
 		if os.path.isfile(filepath):
+			return filepath
+		if os.path.isfile(filepath_old) and filepath != filepath_old:
+			os.rename(filepath_old, filepath)
 			return filepath
 		try:
 			pagedata = urllib2.urlopen(url=url, timeout=timeout).read()
@@ -40,3 +44,9 @@ class Downloader(object):
 		cachefile.write(pagedata)
 		cachefile.close()
 		return filepath
+
+	def get_extension(self, url):
+		ext = url.split('.')[-1]
+		if len(ext)>4:
+			ext = 'noext'
+		return ext
