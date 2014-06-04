@@ -24,7 +24,7 @@ class Downloader(object):
 		if retry>self.max_retries:
 			self.slowurls.append(url)
 			return False
-		timeout = 1+retry
+		timeout = 2+retry
 		urlhash = hashlib.md5(url).hexdigest()
 		filepath = self.cachedir+urlhash+'.'+self.get_extension(url)
 		filepath_old = self.cachedir+urlhash #without extention
